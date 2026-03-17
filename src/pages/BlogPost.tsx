@@ -1,21 +1,24 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, User, Edit } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight, vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { posts } from '../data/posts';
+import { postService } from '../services/postService';
 import { useTheme } from '../components/providers/ThemeProvider';
+import { useAuth } from '../components/providers/AuthProvider';
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   // 安全地处理 id，因为 useParams 可能返回 undefined
   const postId = id ? parseInt(id) : null;
-  const post = postId ? posts.find(p => p.id === postId) : null;
+  const post = postId ? postService.getPostById(postId) : null;
 
   if (!post) {
     return (
@@ -26,6 +29,10 @@ const BlogPost = () => {
     );
   }
 
+  const handleEdit = () => {
+    navigate(`/write?edit=${post.id}`);
+  };
+
   return (
     <div className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <motion.div
@@ -33,13 +40,25 @@ const BlogPost = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Link
-          to="/blog"
-          className="inline-flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-8"
-        >
-          <ArrowLeft size={16} className="mr-2" />
-          返回文章列表
-        </Link>
+        <div className="flex justify-between items-center mb-8">
+          <Link
+            to="/blog"
+            className="inline-flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            返回文章列表
+          </Link>
+
+          {isAuthenticated && (
+            <button
+              onClick={handleEdit}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
+            >
+              <Edit size={16} className="mr-2" />
+              编辑文章
+            </button>
+          )}
+        </div>
 
         <header className="mb-10">
           <div className="flex items-center gap-2 mb-6">

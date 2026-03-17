@@ -2,12 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, ArrowRight, Search, X } from 'lucide-react';
-import { posts } from '../data/posts';
+import { postService } from '../services/postService';
 import { Category } from '../types';
 
 const BlogList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
+  
+  // 使用 PostService 获取所有文章
+  const posts = useMemo(() => postService.getAllPosts(), []);
 
   // 获取所有唯一的分类
   const categories = useMemo<Category[]>(() => {

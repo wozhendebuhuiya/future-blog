@@ -1,5 +1,5 @@
 // 定义分类类型，限制可能的取值，避免拼写错误
-export type Category = 'React' | 'Vue' | 'TypeScript' | 'CSS' | 'Next.js' | 'All';
+export type Category = 'React' | 'Vue' | 'TypeScript' | 'CSS' | 'Next.js' | 'All' | 'JS';
 
 // 定义文章接口，这是我们的数据“蓝图”
 export interface Post {

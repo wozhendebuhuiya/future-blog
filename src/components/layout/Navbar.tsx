@@ -35,6 +35,7 @@ const Navbar = () => {
   // 只有登录后才显示的链接
   const protectedLinks = [
     { name: '仪表盘', path: '/dashboard' },
+    { name: '写文章', path: '/write' },
     { name: '设置', path: '/settings' },
   ];
 
