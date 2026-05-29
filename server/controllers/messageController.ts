@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 // 引入全局唯一的数据库实例
 import prisma from '../db.js';
-
+// 创建文章
 export const createPost = async (req: Request, res: Response) => {
   console.log('👀 [Controller] 处理 /api/message POST 请求');
 
@@ -22,7 +22,7 @@ export const createPost = async (req: Request, res: Response) => {
       data: {
         title: title,
         content: content,
-        authorId:1
+        authorId: req.userId,
       }
     });
     res.json({
@@ -30,6 +30,49 @@ export const createPost = async (req: Request, res: Response) => {
       message: '创建成功',
       data: postData
     });
+  } catch (error) {
+    console.error('数据库查询报错:', error);
+    res.status(500).json({ code: 500, message: '服务器内部错误' });
+  }
+}
+// 获取文章
+export const getAllPosts = async(req: Request, res: Response) =>{
+    try{
+    const postData = await prisma.post.findMany({
+      include: { author: true },
+      orderBy: { createdAt: 'desc' }
+    })
+    res.json({
+      code: 200,
+      message: '查询成功',
+      data: postData
+    });
+  } catch (error) {
+    console.error('数据库查询报错:', error);
+    res.status(500).json({ code: 500, message: '服务器内部错误' });
+  }
+}
+
+// 获取文章详情
+export const getPostById = async(req: Request, res: Response) =>{
+    try{
+    const postData = await prisma.post.findUnique({
+      where:{id:Number(req.params.id)},
+      include:{author:true}
+    })
+    if(postData){
+      res.json({
+      code: 200,
+      message: '查询成功',
+      data: postData
+    });
+    }else{
+      res.status(404).json({
+      code: 404,
+      message: '数据不存在',
+    });
+    }
+    
   } catch (error) {
     console.error('数据库查询报错:', error);
     res.status(500).json({ code: 500, message: '服务器内部错误' });

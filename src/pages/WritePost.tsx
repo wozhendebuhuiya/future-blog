@@ -25,8 +25,8 @@ const WritePost = () => {
   // 如果是编辑模式，加载文章数据
   useEffect(() => {
     if (editId) {
-      const post = postService.getPostById(Number(editId));
-      if (post) {
+      postService.getPostById(Number(editId)).then(post=>{
+          if (post) {
         setFormData({
           title: post.title,
           category: post.category,
@@ -35,6 +35,7 @@ const WritePost = () => {
           content: post.content
         });
       }
+      })
     }
   }, [editId]);
 
@@ -42,6 +43,7 @@ const WritePost = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(e, formData,'提交文章');
     if (!formData.title || !formData.content) {
       alert('请填写标题和内容');
       return;
@@ -50,17 +52,22 @@ const WritePost = () => {
     if (editId) {
       // 更新文章
       const postToUpdate = postService.getPostById(Number(editId));
-      if (postToUpdate) {
-        postService.updatePost({
-          ...postToUpdate,
-          ...formData
-        });
-        navigate(`/blog/${editId}`);
-      }
+ 
     } else {
       // 创建新文章
       const newPost = postService.createPost(formData);
-      navigate(`/blog/${newPost.id}`);
+      
+      // fetch('http://localhost:9800/api/posts', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(newPost),
+      // }).then(res => res.json()).then(data => {
+      //   console.log('创建新文章:', data);
+      //   // navigate(`/blog/${data.id}`);
+      // });
+      // navigate(`/blog/${newPost.id}`);
     }
   };
 

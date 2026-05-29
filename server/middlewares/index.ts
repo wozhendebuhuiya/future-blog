@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
 /**
  * 全局中间件：请求日志记录器 (Logger Middleware)
@@ -33,6 +34,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 export const validateLoginParams = (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body;
 
+
   if (!username || !password) {
     console.log('❌ [中间件拦截] 前端漏传了账号或密码！直接打回！');
     
@@ -43,7 +45,32 @@ export const validateLoginParams = (req: Request, res: Response, next: NextFunct
       message: '【中间件报错】用户名和密码不能为空！'
     });
   }
+ 
+  
 
   // 参数没问题，放行，交给真正的 Controller 去处理业务
   next();
 };
+
+
+export const validateUserId = (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization.split(' ')[1];
+   if(!token){
+    return res.status(401).json({
+      code: 401,
+      message: '【中间件报错】token不能为空！'
+    });
+  }else{
+    try{
+      const decoded =jwt.verify(token, 'your-secret-key') as { userId:number };
+      console.log(decoded,'decoded');
+      req.userId = decoded.userId
+      next();
+    }catch(err){
+      return res.status(401).json({
+        code: 401,
+        message: '【中间件报错】token无效！'
+      });
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 // 引入全局唯一的数据库实例
 import prisma from '../db.js';
+import jwt from 'jsonwebtoken';
 
 // 处理获取用户信息的逻辑 (现在变成了 async 函数，因为查数据库是异步的)
 export const getUserInfo = async (req: Request, res: Response) => {
@@ -61,7 +62,8 @@ export const login = async (req: Request, res: Response) => {
       return res.json({
         code: 200,
         message: '用户不存在，已自动为你注册并登录成功！',
-        data: newUser
+        data: newUser,
+        token: jwt.sign({ userId: newUser.id }, 'your-secret-key', { expiresIn: '1h' })
       });
     }
 
@@ -71,7 +73,7 @@ export const login = async (req: Request, res: Response) => {
         code: 200,
         message: '登录成功！',
         data: user,
-        token: 'fake-jwt-token-xxxxxx'
+        token: jwt.sign({ userId: user.id }, 'your-secret-key', { expiresIn: '1h' })
       });
     } else {
       res.status(401).json({

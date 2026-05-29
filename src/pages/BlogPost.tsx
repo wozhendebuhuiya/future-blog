@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, User, Edit } from 'lucide-react';
@@ -9,17 +9,21 @@ import { oneLight, vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/
 import { postService } from '../services/postService';
 import { useTheme } from '../components/providers/ThemeProvider';
 import { useAuth } from '../components/providers/AuthProvider';
+import { Post } from '../types';
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
   const { theme } = useTheme();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  
+  const [post,setPost] = useState<Post | null>(null)
   // 安全地处理 id，因为 useParams 可能返回 undefined
-  const postId = id ? parseInt(id) : null;
-  const post = postId ? postService.getPostById(postId) : null;
-
+ useEffect(() => {                          // ← useEffect 处理异步
+    const postId = id ? parseInt(id) : null;
+    if (postId) {
+      postService.getPostById(postId).then(setPost);
+    }
+  }, [id]);
   if (!post) {
     return (
       <div className="min-h-screen pt-32 px-4 text-center dark:bg-gray-900">

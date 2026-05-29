@@ -43,7 +43,7 @@ const Login = () => {
       if (response.ok) {
         // 请求成功，并且后端校验通过 (HTTP 状态码 2xx)
         // 这里的 login() 会把 user 信息存入 Context，更新整个 React 树的状态
-        login(data.data.username);
+        login(data);
         
         // 登录成功，跳转回之前的页面
         // replace: true 意味着这个跳转会替换当前的历史记录，防止用户点"后退"又回到登录页

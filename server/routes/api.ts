@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { getUserInfo, login } from '../controllers/userController.js';
-import { createPost } from '../controllers/messageController.js';
+import { createPost,getAllPosts,getPostById } from '../controllers/messageController.js';
 
-import { validateLoginParams } from '../middlewares/index.js';
+import { validateLoginParams, validateUserId } from '../middlewares/index.js';
 
 const router = Router();
 
@@ -18,7 +18,9 @@ router.get('/user', getUserInfo);
 // 这个中间件如果放行了 (next())，才会走到 login。这就是传说中的“洋葱模型/责任链”
 router.post('/login', validateLoginParams, login);
 // POST /api/message -> 分发给 createPost 函数去处理
-router.post('/posts', createPost);
+router.post('/posts', validateUserId, createPost);
+router.get('/posts',getAllPosts)
+router.get('/posts/:id',getPostById)
 
 
 

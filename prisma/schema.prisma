@@ -34,10 +34,14 @@ model Post {
   id        Int      @id @default(autoincrement()) // 主键
   title     String                                 // 文章标题
   content   String                                 // 文章内容
+  excerpt   String?                                 // 文章摘要
+  category  String  @default("React")                                 // 文章类型
+  image     String?                                 // 图片链接
   published Boolean  @default(false)               // 是否发布 (草稿状态)，默认为 false
 
   createdAt DateTime @default(now())               // 创建时间
   updatedAt DateTime @updatedAt                    // 更新时间
+  
 
   // 【关系定义】：这篇文章是谁写的？
   authorId  Int                                    // 记录作者的 ID (外键)

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface AuthContextType {
   isAuthenticated: boolean;
   user: string | null;
-  login: (username: string) => void;
+  login: (data: { token: string; data: any }) => void;
   logout: () => void;
 }
 
@@ -16,13 +16,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<string | null>(null);
 
-  const login = (username: string) => {
+  const login = (data: { token: string; data: any }) => { 
     setIsAuthenticated(true);
-    setUser(username);
+    setUser(data?.data?.username || '');
+    localStorage.setItem('token', data?.token || '');
+    localStorage.setItem('username', data?.data?.username || ''); 
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem('token')
+    localStorage.removeItem('username')
     setUser(null);
   };
 

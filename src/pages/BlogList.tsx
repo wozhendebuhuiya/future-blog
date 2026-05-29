@@ -1,23 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, ArrowRight, Search, X } from 'lucide-react';
 import { postService } from '../services/postService';
-import { Category } from '../types';
+import { Category,Post } from '../types';
 
 const BlogList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
+  const [posts,setPosts] = useState<Post[]>([])
   
   // 使用 PostService 获取所有文章
-  const posts = useMemo(() => postService.getAllPosts(), []);
+  useEffect(() =>{
+  postService.getAllPosts().then(data=>setPosts(data))
+  } , []);
 
   // 获取所有唯一的分类
   const categories = useMemo<Category[]>(() => {
     // 这里使用类型断言，因为我们知道 posts 中的 category 是 Category 类型
     const allCategories = posts.map(post => post.category);
     return ['All', ...new Set(allCategories)];
-  }, []);
+  }, [posts]);
 
   // 过滤文章逻辑
   const filteredPosts = useMemo(() => {
