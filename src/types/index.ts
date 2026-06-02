@@ -6,7 +6,7 @@ export interface Post {
   id: number;
   title: string;
   excerpt: string;
-  date: string;
+  updatedAt: string;
   readTime: string;
   category: Category; // 这里使用了上面定义的Category类型
   image: string;

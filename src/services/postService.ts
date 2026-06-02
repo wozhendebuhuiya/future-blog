@@ -21,12 +21,18 @@ class PostService {
 
   // 获取单篇文章
   async getPostById(id: number){
-    const allPosts =  await this.getAllPosts();
-    return allPosts.find(post => post.id === id);
+    const res = await fetch(`http://localhost:9800/api/posts/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const allPosts = await res.json()
+    return allPosts.data;
   }
 
   // 创建新文章
-  async createPost(postData: Omit<Post, 'id' | 'date' | 'readTime'>) {
+  async createPost(postData: Omit<Post, 'id' | 'updatedAt' | 'readTime'>) {
     const localPosts = this.getLocalPosts();
     const allPosts = await this.getAllPosts();
     
@@ -38,7 +44,7 @@ class PostService {
     const newPost: Post = {
       ...postData,
       id: maxId + 1,
-      date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+      updatedAt: new Date().toISOString().split('T')[0], // YYYY-MM-DD
       readTime: this.calculateReadTime(postData.content),
     };
   console.log('创建新文章:', newPost);

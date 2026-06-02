@@ -11,9 +11,9 @@ const WritePost = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit'); // 获取 URL 中的 edit 参数
-  
+
   const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
-  
+
   const [formData, setFormData] = useState({
     title: '',
     category: 'React' as Category,
@@ -25,17 +25,18 @@ const WritePost = () => {
   // 如果是编辑模式，加载文章数据
   useEffect(() => {
     if (editId) {
-      postService.getPostById(Number(editId)).then(post=>{
-          if (post) {
-        setFormData({
-          title: post.title,
-          category: post.category,
-          excerpt: post.excerpt,
-          image: post.image,
-          content: post.content
-        });
-      }
+      postService.getPostById(Number(editId)).then(post => {
+        if (post) {
+          setFormData({
+            title: post.title,
+            category: post.category,
+            excerpt: post.excerpt,
+            image: post.image,
+            content: post.content
+          });
+        }
       })
+
     }
   }, [editId]);
 
@@ -43,7 +44,7 @@ const WritePost = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(e, formData,'提交文章');
+    console.log(e, formData, '提交文章');
     if (!formData.title || !formData.content) {
       alert('请填写标题和内容');
       return;
@@ -52,11 +53,11 @@ const WritePost = () => {
     if (editId) {
       // 更新文章
       const postToUpdate = postService.getPostById(Number(editId));
- 
+
     } else {
       // 创建新文章
       const newPost = postService.createPost(formData);
-      
+
       // fetch('http://localhost:9800/api/posts', {
       //   method: 'POST',
       //   headers: {
@@ -83,22 +84,20 @@ const WritePost = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('write')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                activeTab === 'write'
+              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'write'
                   ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                   : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
-              }`}
+                }`}
             >
               <Edit2 size={16} />
               编辑
             </button>
             <button
               onClick={() => setActiveTab('preview')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                activeTab === 'preview'
+              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activeTab === 'preview'
                   ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                   : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
-              }`}
+                }`}
             >
               <Eye size={16} />
               预览

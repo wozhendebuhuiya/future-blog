@@ -78,3 +78,74 @@ export const getPostById = async(req: Request, res: Response) =>{
     res.status(500).json({ code: 500, message: '服务器内部错误' });
   }
 }
+
+// 更新文章
+export const updatePost = async(req: Request, res: Response) =>{
+    try{
+    const postData = await prisma.post.findUnique({
+      where:{id:Number(req.params.id)},
+    })
+    if (!postData) {
+     return res.status(404).json({ code: 404, message: '文章不存在' });
+    }
+    if(postData?.authorId !== req.userId){
+      return res.status(403).json({message:'无权修改他人文章'})
+    }else{
+      const {title,content,category,excerpt,image } = req.body
+      const updated = await prisma.post.update({
+      where:{id:Number(req.params.id)},
+      data: {title,content,category,excerpt,image}
+    })
+    if(updated){
+      res.json({
+      code: 200,
+      message: '修改成功',
+      data: updated
+    });
+    }else{
+      res.status(404).json({
+      code: 404,
+      message: '修改失败,数据不存在',
+    });
+    }
+    }
+  } catch (error) {
+    console.error('数据库查询报错:', error);
+    res.status(500).json({ code: 500, message: '服务器内部错误' });
+  }
+}
+
+// 删除文章
+// 更新文章
+export const deletePost = async(req: Request, res: Response) =>{
+    try{
+    const postData = await prisma.post.findUnique({
+      where:{id:Number(req.params.id)},
+    })
+    if (!postData) {
+     return res.status(404).json({ code: 404, message: '文章不存在' });
+    }
+    if(postData?.authorId !== req.userId){
+      return res.status(403).json({message:'无权修改他人文章'})
+    }else{
+      const deleted = await prisma.post.delete({
+      where:{id:Number(req.params.id)},
+    })
+    if(deleted){
+      res.json({
+      code: 200,
+      message: '删除成功',
+      data: deleted
+    });
+    }else{
+      res.status(404).json({
+      code: 404,
+      message: '修改失败,数据不存在',
+    });
+    }
+    }
+  } catch (error) {
+    console.error('数据库查询报错:', error);
+    res.status(500).json({ code: 500, message: '服务器内部错误' });
+  }
+}

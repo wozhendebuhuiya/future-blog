@@ -21,7 +21,7 @@ const BlogPost = () => {
  useEffect(() => {                          // ← useEffect 处理异步
     const postId = id ? parseInt(id) : null;
     if (postId) {
-      postService.getPostById(postId).then(setPost);
+      postService.getPostById(postId);
     }
   }, [id]);
   if (!post) {
@@ -80,7 +80,7 @@ const BlogPost = () => {
             </div>
             <div className="flex items-center gap-2">
               <Calendar size={16} />
-              <span>{post.date}</span>
+              <span>{post.updatedAt}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock size={16} />

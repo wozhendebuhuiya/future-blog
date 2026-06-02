@@ -26,12 +26,12 @@ const BlogList = () => {
   const filteredPosts = useMemo(() => {
     return posts.filter(post => {
       const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+                          post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
       
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory,posts]);
 
   return (
     <div className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -110,7 +110,7 @@ const BlogList = () => {
                     </span>
                     <div className="flex items-center gap-1">
                       <Calendar size={14} />
-                      {post.date}
+                      {post.updatedAt}
                     </div>
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
