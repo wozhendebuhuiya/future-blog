@@ -1,6 +1,22 @@
 import { Request, Response } from 'express';
 // 引入全局唯一的数据库实例
 import prisma from '../db.js';
+
+// 获取登录状态
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: { id: true, username: true, role: true }  // 只返回必要字段，不返回密码！
+    });
+    if (!user) {
+      return res.status(404).json({ code: 404, message: '用户不存在' });
+    }
+    res.json({ code: 200, data: user });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: '服务器错误' });
+  }
+};
 // 创建文章
 export const createPost = async (req: Request, res: Response) => {
   console.log('👀 [Controller] 处理 /api/message POST 请求');

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getUserInfo, login } from '../controllers/userController.js';
-import { createPost,deletePost,getAllPosts,getPostById, updatePost } from '../controllers/messageController.js';
+import { createPost,deletePost,getAllPosts,getPostById, updatePost,getMe } from '../controllers/messageController.js';
 
 import { validateLoginParams, validateUserId } from '../middlewares/index.js';
 
@@ -23,6 +23,10 @@ router.get('/posts',getAllPosts)
 router.get('/posts/:id',getPostById)
 router.put('/posts/:id',validateUserId,updatePost)
 router.delete('/posts/:id',validateUserId,deletePost)
+
+// 登录信息获取
+router.get('/getMe',validateUserId,getMe)
+
 
 
 

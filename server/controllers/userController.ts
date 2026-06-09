@@ -63,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
         code: 200,
         message: '用户不存在，已自动为你注册并登录成功！',
         data: newUser,
-        token: jwt.sign({ userId: newUser.id }, 'your-secret-key', { expiresIn: '1h' })
+        token: jwt.sign({ userId: newUser.id }, 'your-secret-key', { expiresIn: '7d' })
       });
     }
 

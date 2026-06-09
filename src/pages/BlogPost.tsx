@@ -21,7 +21,10 @@ const BlogPost = () => {
  useEffect(() => {                          // ← useEffect 处理异步
     const postId = id ? parseInt(id) : null;
     if (postId) {
-      postService.getPostById(postId);
+       postService.getPostById(postId).then(res=>{
+        console.log('xxx',res)
+        setPost(res)
+       });
     }
   }, [id]);
   if (!post) {

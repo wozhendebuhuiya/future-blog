@@ -1,5 +1,4 @@
-import { Post, Category } from '../types';
-import { posts as staticPosts } from '../data/posts';
+import { Post } from '../types';
 
 const STORAGE_KEY = 'blog_posts_local';
 
@@ -16,7 +15,7 @@ class PostService {
     allData = await res.json()
     // 合并时，优先展示本地文章（通常是最新的），然后是静态文章
     // 这里我们将本地文章放在前面
-    return [...allData.data,...staticPosts];
+    return [...allData.data];
   }
 
   // 获取单篇文章
@@ -73,29 +72,10 @@ class PostService {
 
   // 更新文章
   updatePost(post: Post): void {
-    const localPosts = this.getLocalPosts();
-    const index = localPosts.findIndex(p => p.id === post.id);
-
-    if (index !== -1) {
-      // 如果是本地文章，直接更新
-      localPosts[index] = {
-        ...post,
-        readTime: this.calculateReadTime(post.content) // 重新计算阅读时间
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(localPosts));
-    } else {
-      // 如果不是本地文章（即静态文章），我们需要把它"复制"到本地存储中作为覆盖
-      // 注意：这里我们假设静态文章 ID 和本地文章 ID 不会冲突（因为新建文章 ID 是基于最大值生成的）
-      // 但为了安全起见，我们通常只允许编辑本地文章，或者将编辑后的静态文章另存为新纪录
-      // 在这个简单实现中，我们允许覆盖，将其视为"本地修改版"
-      const updatedPost = {
-        ...post,
-        readTime: this.calculateReadTime(post.content)
-      };
-      const updatedLocalPosts = [updatedPost, ...localPosts];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocalPosts));
-    }
+   
   }
+
+  // 删除文章
 
   // 从 localStorage 获取文章
   private getLocalPosts(): Post[] {

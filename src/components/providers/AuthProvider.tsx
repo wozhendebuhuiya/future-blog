@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode,useEffect } from 'react';
 
 // 定义 Context 的类型
 interface AuthContextType {
@@ -15,7 +15,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<string | null>(null);
+  useEffect(()=>{
 
+    const token = localStorage.getItem('token')
+    if(!token) return
+    fetch('http://localhost:9800/api/getMe', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data,'userData')
+      if (data.data) {
+        setUser(data.data.username);
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+      }
+    })
+    .catch(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+    });
+  },[])
   const login = (data: { token: string; data: any }) => { 
     setIsAuthenticated(true);
     setUser(data?.data?.username || '');
