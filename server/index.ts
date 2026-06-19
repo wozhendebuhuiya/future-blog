@@ -7,12 +7,12 @@ import apiRoutes from './routes/api.js';
 import { requestLogger } from './middlewares/index.js';
 
 const app = express();
-const PORT = 9800; 
-
+const PORT = process.env.PORT || 9800;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 // ==========================================
 // 1. 中间件 (Middleware) 区域
 // ==========================================
-app.use(cors());
+app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
 // 【新加的一步】：全局挂载自定义日志中间件！

@@ -1,4 +1,5 @@
 import { Post } from '../types';
+import { API_BASE_URL } from '../config';
 
 const STORAGE_KEY = 'blog_posts_local';
 
@@ -6,7 +7,7 @@ class PostService {
   // 获取所有文章 (静态 + 本地)
   async getAllPosts() {
     let allData:any;
-    const res = await fetch('http://localhost:9800/api/posts', {
+    const res = await fetch(`${API_BASE_URL}/posts`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +48,7 @@ class PostService {
       readTime: this.calculateReadTime(postData.content),
     };
   console.log('创建新文章:', newPost);
-    fetch('http://localhost:9800/api/posts', {
+    fetch(`${API_BASE_URL}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -62,7 +62,7 @@ export const validateUserId = (req: Request, res: Response, next: NextFunction) 
     });
   }else{
     try{
-      const decoded =jwt.verify(token, 'your-secret-key') as { userId:number };
+      const decoded =jwt.verify(token, process.env.JWT_SECRET!) as { userId:number };
       console.log(decoded,'decoded');
       req.userId = decoded.userId
       next();

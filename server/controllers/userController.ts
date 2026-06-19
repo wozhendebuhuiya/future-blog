@@ -63,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
         code: 200,
         message: '用户不存在，已自动为你注册并登录成功！',
         data: newUser,
-        token: jwt.sign({ userId: newUser.id }, 'your-secret-key', { expiresIn: '7d' })
+        token: jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET!, { expiresIn: '7d' })
       });
     }
 
@@ -73,7 +73,7 @@ export const login = async (req: Request, res: Response) => {
         code: 200,
         message: '登录成功！',
         data: user,
-        token: jwt.sign({ userId: user.id }, 'your-secret-key', { expiresIn: '1h' })
+        token: jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '1h' })
       });
     } else {
       res.status(401).json({

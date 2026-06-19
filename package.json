@@ -34,7 +34,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "nodemon --watch server --exec npx tsx server/index.ts"
+    "server": "nodemon --watch server --exec npx tsx server/index.ts",
+    "prod:build": "npm run build && npx prisma generate && npx tsx server/index.ts"
   },
   "eslintConfig": {
     "extends": [
