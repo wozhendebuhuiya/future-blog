@@ -1,10 +1,17 @@
 import express from 'express';
 import cors from 'cors';
+import 'dotenv/config';
 
 // 引入刚刚分离出去的路由模块
 import apiRoutes from './routes/api.js';
 // 引入刚刚写的【全局中间件】
 import { requestLogger } from './middlewares/index.js';
+
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 9800;
@@ -27,6 +34,12 @@ app.use(requestLogger);
 app.use('/api', apiRoutes);
 
 // 基础测试接口依然留在这里
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../build')));
+  app.get('{*path}', (req, res) => {
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  });
+}
 app.get('/', (req, res) => {
   res.send('你好！这是重构后的 MVC 架构服务器！');
 });

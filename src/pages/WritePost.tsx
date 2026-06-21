@@ -57,18 +57,6 @@ const WritePost = () => {
     } else {
       // 创建新文章
       const newPost = postService.createPost(formData);
-
-      // fetch('http://localhost:9800/api/posts', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(newPost),
-      // }).then(res => res.json()).then(data => {
-      //   console.log('创建新文章:', data);
-      //   // navigate(`/blog/${data.id}`);
-      // });
-      // navigate(`/blog/${newPost.id}`);
     }
   };
 

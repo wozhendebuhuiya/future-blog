@@ -1,5 +1,5 @@
 import { Post } from '../types';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from 'config';
 
 const STORAGE_KEY = 'blog_posts_local';
 
@@ -21,7 +21,7 @@ class PostService {
 
   // 获取单篇文章
   async getPostById(id: number){
-    const res = await fetch(`http://localhost:9800/api/posts/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/posts/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

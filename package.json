@@ -35,7 +35,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "nodemon --watch server --exec npx tsx server/index.ts",
-    "prod:build": "npm run build && npx prisma generate && npx tsx server/index.ts"
+    "build:prod": "npm run build && npx prisma generate && npx tsx server/index.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -56,8 +56,6 @@
     ]
   },
   "devDependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",

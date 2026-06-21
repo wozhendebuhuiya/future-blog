@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/providers/AuthProvider';
+import { API_BASE_URL } from 'config';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -30,7 +31,7 @@ const Login = () => {
 
     try {
       // 这里的 fetch 逻辑就是我们从 App.tsx 中迁移过来的
-      const response = await fetch('http://localhost:9800/api/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
