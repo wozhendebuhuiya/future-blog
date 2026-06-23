@@ -42,7 +42,7 @@ const WritePost = () => {
 
   const categories: Category[] = ['React', 'Vue', 'TypeScript', 'CSS', 'Next.js', 'JS'];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(e, formData, '提交文章');
     if (!formData.title || !formData.content) {
@@ -52,11 +52,26 @@ const WritePost = () => {
 
     if (editId) {
       // 更新文章
-      const postToUpdate = postService.getPostById(Number(editId));
-
+     
+      try {
+         const postToUpdate = await postService.updatePost(Number(editId), formData);
+        if (postToUpdate) {
+          navigate(`/blog/${postToUpdate.id}`);
+        }
+      } catch (error) {
+        console.error('更新文章失败:', error);
+        alert('更新文章失败');
+      }
     } else {
       // 创建新文章
-      const newPost = postService.createPost(formData);
+      try {
+        const data = await postService.createPost(formData);
+        console.log(data, '创建新文章');
+        navigate(`/blog/${data.id}`);
+      } catch (error) {
+        console.error('创建新文章失败:', error);
+        alert('创建新文章失败');
+      }
     }
   };
 

@@ -33,51 +33,67 @@ class PostService {
 
   // 创建新文章
   async createPost(postData: Omit<Post, 'id' | 'updatedAt' | 'readTime'>) {
-    const localPosts = this.getLocalPosts();
-    const allPosts = await this.getAllPosts();
-    
-    // 生成新的 ID: 找到当前最大的 ID + 1
-    const maxId = allPosts.length > 0 
-      ? Math.max(...allPosts.map(p => p.id)) 
-      : 0;
-    
-    const newPost: Post = {
-      ...postData,
-      id: maxId + 1,
-      updatedAt: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-      readTime: this.calculateReadTime(postData.content),
-    };
-  console.log('创建新文章:', newPost);
-    fetch(`${API_BASE_URL}/posts`, {
+  console.log('创建新文章:', postData);
+   const res = await fetch(`${API_BASE_URL}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({
-        content: newPost.content,
-        title: newPost.title,
+        content: postData.content,
+        title: postData.title,
+        category: postData.category,
+        excerpt: postData.excerpt,
+        image: postData.image,
       }),
-    }).then(res => res.json()).then(data => {
-      console.log('创建新文章:', data);
-      // navigate(`/blog/${data.id}`);
-    });
+    })
+    const data = await res.json()
+    console.log(data, '创建新文章');
+    return data.data;
 
     // 保存到 localStorage
     // const updatedLocalPosts = [newPost, ...localPosts];
     // localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocalPosts));
   
 
-    return newPost;
+    
   }
 
   // 更新文章
-  updatePost(post: Post): void {
-   
+  async updatePost(id: number, postData: Omit<Post, 'id' | 'updatedAt' | 'readTime'>) {
+    const res = await fetch(`${API_BASE_URL}/posts/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({
+        content: postData.content,
+        title: postData.title,
+        category: postData.category,
+        excerpt: postData.excerpt,
+        image: postData.image,
+      }),
+    })
+    const data = await res.json()
+    console.log(data, '更新文章');
+    return data.data;
   }
 
   // 删除文章
-
+  async deletePost(id: number) {
+    const res = await fetch(`${API_BASE_URL}/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+    const data = await res.json()
+    console.log(data, '删除文章');
+    return data.data;
+  }
   // 从 localStorage 获取文章
   private getLocalPosts(): Post[] {
     try {

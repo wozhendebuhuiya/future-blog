@@ -38,6 +38,9 @@ export const createPost = async (req: Request, res: Response) => {
       data: {
         title: title,
         content: content,
+        category: req.body.category,
+        excerpt: req.body.excerpt,
+        image: req.body.image,
         authorId: req.userId,
       }
     });

@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { createClient } from '@libsql/client';
 
@@ -12,9 +13,8 @@ import { createClient } from '@libsql/client';
 const connectionString = process.env.DATABASE_URL || 'file:./prisma/dev.db';
 
 // 创建 libsql 的适配器
-const libsql = createClient({ url: connectionString });
-
+const adapter = new PrismaLibSql({ url: connectionString });
 // 实例化 PrismaClient，并显式传入 adapter
-const prisma = new PrismaLibSql({ url: connectionString });
+const prisma = new PrismaClient({ adapter });
 
 export default prisma;

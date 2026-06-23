@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Clock, User, Edit } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, User, Edit, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -40,6 +40,16 @@ const BlogPost = () => {
     navigate(`/write?edit=${post.id}`);
   };
 
+  const handleDelete = async () => {
+    try {
+      await postService.deletePost(post.id);
+      navigate('/blog');
+    } catch (error) {
+      console.error('删除文章失败:', error);
+      alert('删除文章失败');
+    }
+  };
+
   return (
     <div className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <motion.div
@@ -55,16 +65,27 @@ const BlogPost = () => {
             <ArrowLeft size={16} className="mr-2" />
             返回文章列表
           </Link>
-
-          {isAuthenticated && (
+          <div>
+            {isAuthenticated && (
             <button
               onClick={handleEdit}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium mr-4"
             >
               <Edit size={16} className="mr-2" />
               编辑文章
             </button>
           )}
+          {isAuthenticated && (
+            <button
+              onClick={handleDelete}
+              className="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium"
+            >
+              <Trash2 size={16} className="mr-2" />
+              删除文章
+            </button>
+          )}
+          </div>
+          
         </div>
 
         <header className="mb-10">
