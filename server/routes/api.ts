@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getUserInfo, login } from '../controllers/userController.js';
 import { createPost,deletePost,getAllPosts,getPostById, updatePost,getMe } from '../controllers/messageController.js';
+import { chatMessagePosts } from '../controllers/chatController.js';
 
 import { validateLoginParams, validateUserId } from '../middlewares/index.js';
 
@@ -26,6 +27,9 @@ router.delete('/posts/:id',validateUserId,deletePost)
 
 // 登录信息获取
 router.get('/getMe',validateUserId,getMe)
+
+// ai聊天接口
+router.post('/chat',chatMessagePosts)
 
 
 

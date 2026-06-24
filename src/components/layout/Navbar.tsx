@@ -36,6 +36,7 @@ const Navbar = () => {
   const protectedLinks = [
     { name: '仪表盘', path: '/dashboard' },
     { name: '写文章', path: '/write' },
+    { name: 'AI 助手', path: '/chat' },
     { name: '设置', path: '/settings' },
   ];
 

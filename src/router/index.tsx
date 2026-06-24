@@ -9,6 +9,7 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Settings from '../pages/Settings';
 import WritePost from '../pages/WritePost';
+import Chat from '../pages/Chat';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 // 路由配置：使用嵌套路由实现批量保护
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
           {
             path: 'write',
             element: <WritePost />,
+          },
+          {
+            path: 'chat',
+            element: <Chat />,
           },
           // 如果你想把所有页面都保护起来，只需要把上面的 public routes 移到这里面即可
         ],

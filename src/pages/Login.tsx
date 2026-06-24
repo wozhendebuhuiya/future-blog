@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/providers/AuthProvider';
-import { API_BASE_URL } from 'config';
+import { authApi } from '../api/modules/auth';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -30,33 +30,17 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // 这里的 fetch 逻辑就是我们从 App.tsx 中迁移过来的
-      const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const data = await authApi.login(username, password);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // 请求成功，并且后端校验通过 (HTTP 状态码 2xx)
-        // 这里的 login() 会把 user 信息存入 Context，更新整个 React 树的状态
+      if (data.code === 200) {
         login(data);
-        
-        // 登录成功，跳转回之前的页面
-        // replace: true 意味着这个跳转会替换当前的历史记录，防止用户点"后退"又回到登录页
         navigate(from, { replace: true });
       } else {
-        // 后端返回错误（例如 401 密码错误）
         setErrorMsg(data.message || '登录失败，请检查账号密码');
       }
-    } catch (error) {
-      // 网络错误或者后端服务未启动
+    } catch (error: any) {
       console.error('❌ 请求后端失败', error);
-      setErrorMsg('网络请求失败，请确认后端服务是否启动');
+      setErrorMsg(error.response?.data?.message || '网络请求失败，请确认后端服务是否启动');
     } finally {
       setLoading(false);
     }

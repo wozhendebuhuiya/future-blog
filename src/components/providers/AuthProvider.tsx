@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode,useEffect } from 'react';
 import { API_BASE_URL } from '../../config';
+import { getMe } from '../../api/api';
 
 // 定义 Context 的类型
 interface AuthContextType {
@@ -20,14 +21,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const token = localStorage.getItem('token')
     if(!token) return
-    fetch(`${API_BASE_URL}/getMe`, {
-      method: 'GET',
-    headers: { 'Authorization': `Bearer ${token}` }
-  })
-    .then(res => res.json())
+    getMe()
     .then(data => {
-      console.log(data,'userData')
-      if (data.data) {
+      if (data) {
         setUser(data.data.username);
         setIsAuthenticated(true);
       } else {
