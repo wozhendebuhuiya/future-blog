@@ -57,14 +57,26 @@ export const createPost = async (req: Request, res: Response) => {
 // 获取文章
 export const getAllPosts = async(req: Request, res: Response) =>{
     try{
+    const { pageSize } = req.query;
     const postData = await prisma.post.findMany({
       include: { author: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      skip: req.query.cursor ? 1 : 0,
+      cursor:req.query.cursor ? { id: Number(req.query.cursor) } : undefined,
+      take: Number(pageSize || 10) + 1 || 0,
     })
+    const total = await prisma.post.count();
+    const pageSizeNum = Number(pageSize || 10);
+    const hasMore = postData.length > pageSizeNum;
     res.json({
       code: 200,
       message: '查询成功',
-      data: postData
+      data: {
+        data: postData.slice(0, pageSizeNum),
+        nextCursor: hasMore ? postData[pageSizeNum - 1].id : null,
+        hasMore: hasMore, 
+        total: total || 0,
+      }
     });
   } catch (error) {
     console.error('数据库查询报错:', error);

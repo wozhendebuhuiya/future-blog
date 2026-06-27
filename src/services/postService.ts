@@ -2,9 +2,10 @@ import { Post } from '../types';
 import http from '../api/http';
 
 class PostService {
-  async getAllPosts() {
-    const data: any = await http.get('/posts');
-    return [...data];
+  async getAllPosts(cursor?: number, pageSize: number = 10) {
+    const qs = `pageSize=${pageSize}${cursor ? `&cursor=${cursor}` : ''}`;
+    const data: any = await http.get(`/posts?${qs}`);
+    return data; // { data: Post[], hasMore: boolean, nextCursor: number | null, total: number }
   }
 
   async getPostById(id: number) {

@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, ArrowRight, Search, X } from 'lucide-react';
+import { Calendar, ArrowRight, Search, X, Loader2 } from 'lucide-react';
 import { postService } from '../services/postService';
 import { Category,Post } from '../types';
 
@@ -9,11 +9,41 @@ const BlogList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
   const [posts,setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [nextCursor, setNextCursor] = useState<number | null>(null)
   
-  // 使用 PostService 获取所有文章
-  useEffect(() =>{
-  postService.getAllPosts().then(data=>setPosts(data))
-  } , []);
+  // 加载文章（首次加载）
+  const loadPosts = useCallback(async (cursor?: number) => {
+    setLoading(true);
+    try {
+      const result: any = await postService.getAllPosts(cursor);
+      if (cursor) {
+        // 追加到列表末尾
+        setPosts(prev => [...prev, ...result.data]);
+      } else {
+        // 首次加载，直接设置
+        setPosts(result.data);
+      }
+      setHasMore(result.hasMore);
+      setNextCursor(result.nextCursor);
+    } catch (error) {
+      console.error('加载文章失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
+  
+  // "加载更多"按钮点击
+  const handleLoadMore = () => {
+    if (nextCursor !== null) {
+      loadPosts(nextCursor);
+    }
+  };
 
   // 获取所有唯一的分类
   const categories = useMemo<Category[]>(() => {
@@ -154,6 +184,22 @@ const BlogList = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 加载更多 */}
+      {hasMore && (
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : null}
+            {loading ? '加载中...' : '加载更多'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

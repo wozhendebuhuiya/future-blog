@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 // 引入全局唯一的数据库实例
 import prisma from '../db.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 // 处理获取用户信息的逻辑 (现在变成了 async 函数，因为查数据库是异步的)
 export const getUserInfo = async (req: Request, res: Response) => {
@@ -40,13 +41,12 @@ export const login = async (req: Request, res: Response) => {
   
   const { username, password } = req.body;
   console.log(`👉 前端传过来的账号是: ${username}, 密码是: ${password}`);
-
   try {
     // 【核心变化】：不再是 if-else 写死了！去真实的数据库里比对！
     const user = await prisma.user.findUnique({
-      where: { username }
+      where: { username}
     });
-
+    console.log(user,'user333')
     // 1. 如果数据库里根本没这个用户
     if (!user) {
       // 为了测试方便，如果数据库为空，我们直接在这里帮用户【注册】一个！
@@ -54,7 +54,7 @@ export const login = async (req: Request, res: Response) => {
       const newUser = await prisma.user.create({
         data: {
           username: username,
-          password: password, // 注意：真实开发中密码绝对不能明文存储！必须用 bcrypt 加密
+          password: await bcrypt.hash(password, 10), // 注意：真实开发中密码绝对不能明文存储！必须用 bcrypt 加密
           skills: 'React,Node.js'
         }
       });
@@ -68,7 +68,8 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // 2. 用户存在，比对密码
-    if (user.password === password) {
+    console.log(user.password,'user.password')
+    if (await bcrypt.compare(password, user.password || '')) {
       res.json({
         code: 200,
         message: '登录成功！',

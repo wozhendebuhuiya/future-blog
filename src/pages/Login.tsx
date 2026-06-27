@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/providers/AuthProvider';
 import { authApi } from '../api/modules/auth';
+import bcrypt from 'bcrypt';
 
 const Login = () => {
   const [username, setUsername] = useState('');
