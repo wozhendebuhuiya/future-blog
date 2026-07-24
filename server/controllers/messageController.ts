@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import crypto from 'crypto'
 // 引入全局唯一的数据库实例
 import prisma from '../db.js';
 
@@ -65,14 +66,23 @@ export const getAllPosts = async(req: Request, res: Response) =>{
       cursor:req.query.cursor ? { id: Number(req.query.cursor) } : undefined,
       take: Number(pageSize || 10) + 1 || 0,
     })
+    
     const total = await prisma.post.count();
     const pageSizeNum = Number(pageSize || 10);
     const hasMore = postData.length > pageSizeNum;
+    const data = postData.slice(0, pageSizeNum)
+    const cryData = crypto.createHash('md5').update(JSON.stringify(data)).digest('hex')
+    const eTag = `"${cryData}"`
+    if(req.headers['if-none-match'] === eTag){
+      res.status(304).end()
+      return
+    }
+    res.setHeader('ETag',eTag)
     res.json({
       code: 200,
       message: '查询成功',
       data: {
-        data: postData.slice(0, pageSizeNum),
+        data: data,
         nextCursor: hasMore ? postData[pageSizeNum - 1].id : null,
         hasMore: hasMore, 
         total: total || 0,
